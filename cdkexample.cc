@@ -8,16 +8,38 @@
 
 #include <iostream>
 #include "cdk.h"
+#include <cstdint>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
 
-
-#define MATRIX_WIDTH 4
-#define MATRIX_HEIGHT 3
-#define BOX_WIDTH 15
+#define MATRIX_WIDTH 3
+#define MATRIX_HEIGHT 5
+#define BOX_WIDTH 18
 #define MATRIX_NAME_STRING "Test Matrix"
 
 using namespace std;
 
+class BinaryFileHeader
+{
+public:
+  uint32_t magicNumber; /* Should be 0xFEEDFACE */
+  uint32_t versionNumber;
+  uint64_t numRecords;
+};
 
+/*
+ * Records in the file have a fixed length buffer
+ * that will hold a C-Style string. This is the
+ * size of the fixed length buffer.
+ */
+const int maxRecordStringLength = 25;
+class BinaryFileRecord
+{
+public:
+  uint8_t strLength;
+  char stringBuffer[maxRecordStringLength];
+};
 int main()
 {
 
@@ -64,11 +86,42 @@ int main()
 
   /* Display the Matrix */
   drawCDKMatrix(myMatrix, true);
-
+	
+	stringstream buffer;
+	BinaryFileHeader *myHeader = new BinaryFileHeader();
+	ifstream binInfile ("cs3377.bin", ios::in | ios::binary);	
+	binInfile.read((char*) myHeader, sizeof(BinaryFileHeader));
+	
+	//Matrix element 1,1
+	buffer << hex << myHeader->magicNumber;
+	string magicUpper = buffer.str();
+	transform(magicUpper.begin(), magicUpper.end(), magicUpper.begin(), ::toupper);
+	setCDKMatrixCell(myMatrix, 1, 1, ("Magic: 0x" + magicUpper).c_str());
+	buffer.str("");
+	
+	//Matrix element 1,2
+	buffer << myHeader->versionNumber;
+	string versionNum = buffer.str();
+	setCDKMatrixCell(myMatrix, 1, 2, ("Version: " + versionNum).c_str());
+	buffer.str("");
+	
+	//Matrix element 1,3
+	buffer << myHeader->numRecords;
+	string numRec = buffer.str();
+	setCDKMatrixCell(myMatrix, 1, 3, ("NumRecords: " + numRec).c_str());
+	buffer.str("");
+	
+	/**BinaryFileRecord *myRecord = new BinaryFileRecord();
+	binInfile.read((char*) myRecord, sizeof(BinaryFileRecord));
+	for(int i = 2, i < 5;i++)
+	{
+		
+	}
+	*/
   /*
-   * Dipslay a message
-   */
-  setCDKMatrixCell(myMatrix, 2, 2, "Test Message");
+   * Display a message
+   */ 
+  
   drawCDKMatrix(myMatrix, true);    /* required  */
 
   /* So we can see results, pause until a key is pressed. */
