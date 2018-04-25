@@ -1,9 +1,8 @@
 /*
- * Usage of CDK Matrix
- *
- * File:   example1.cc
- * Author: Stephen Perkins
- * Email:  stephen.perkins@utdallas.edu
+ * name: Barrett Simmons
+ * email: bgs130030@utdallas.edu
+ * UTDID: bgs1300030
+ * 
  */
 
 #include <iostream>
@@ -111,13 +110,19 @@ int main()
 	setCDKMatrixCell(myMatrix, 1, 3, ("NumRecords: " + numRec).c_str());
 	buffer.str("");
 	
-	/**BinaryFileRecord *myRecord = new BinaryFileRecord();
-	binInfile.read((char*) myRecord, sizeof(BinaryFileRecord));
-	for(int i = 2, i < 5;i++)
-	{
-		
-	}
+	/**
+	*Loops through BinaryFileRecord class 
 	*/
+	BinaryFileRecord *myRecord = new BinaryFileRecord();
+	for(unsigned int i = 2; i < myHeader->numRecords+2;i++)
+	{
+		binInfile.read((char*) myRecord, sizeof(BinaryFileRecord));
+		buffer << dec << (int)myRecord->strLength;
+		setCDKMatrixCell(myMatrix, i, 1, ("strlen: " + buffer.str()).c_str());
+		setCDKMatrixCell(myMatrix, i, 2, myRecord->stringBuffer);
+		buffer.str("");
+	}
+	
   /*
    * Display a message
    */ 

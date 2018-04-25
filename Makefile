@@ -12,9 +12,9 @@ LDFLAGS = -L/scratch/perkins/lib
 LDLIBS = -lcdk -lcurses 
 
 
-EXECFILE = cdkexample
+EXECFILE = bgs130030Project6
 
-OBJS = cdkexample.o
+OBJS = bgs130030Project6.o
 
 
 all: $(EXECFILE)
@@ -29,5 +29,5 @@ $(EXECFILE): $(OBJS)
 
 backup:
 	mkdir -p backup/
-	cp cdkexample Makefile cdkexample.cc backup/
+	cp bgs130030Project6 Makefile bgs130030Project6.cc backup/
 
